@@ -1,0 +1,4 @@
+configmaps/*
+!configmaps/*.example
+
+firefox-pod.yaml

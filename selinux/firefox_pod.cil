@@ -1,0 +1,10 @@
+(block firefox_pod
+    (blockinherit container)
+    (blockinherit restricted_net_container)
+    (allow process process ( capability ( chown dac_override fowner fsetid kill net_bind_service setfcap setgid setpcap setuid sys_chroot )))
+    (allow process ntop_port_t ( tcp_socket ( name_bind )))
+    (allow process self ( unix_dgram_socket ( listen )))
+    (allow process unreserved_port_t ( tcp_socket ( name_bind name_connect )))
+    (allow process vnc_port_t ( tcp_socket ( name_bind )))
+    (allow process xserver_port_t ( tcp_socket ( name_bind )))
+)

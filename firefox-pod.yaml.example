@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: firefox-pod
+  name: firefox-pod
+  annotations:
+    seccomp.security.alpha.kubernetes.io/pod: localhost/default.json
+spec:
+  restartPolicy: OnFailure
+  hostNetwork: false
+  containers:
+  - name: firefox01
+    image: docker.io/linuxserver/firefox
+    securityContext:
+      allowPrivilegeEscalation: false
+      privileged: false
+      capabilities:
+        add: []
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      seLinuxOptions:
+        type: firefox_pod.process
+    resources:
+      requests:
+        memory: 2000Mi
+        cpu: 1000m
+      limits:
+        memory: 2000Mi
+        cpu: 1000m
+    ports:
+    - containerPort: 3000
+      hostPort: 3000
+      hostIP: 127.0.0.1
+      protocol: tcp
+    env:
+    - name: PUID
+      valueFrom:
+        configMapKeyRef:
+          name: firefox-configmap
+          key: puid
+    - name: PGID
+      valueFrom:
+        configMapKeyRef:
+          name: firefox-configmap
+          key: pgid
+    - name: TZ
+      valueFrom:
+        configMapKeyRef:
+          name: firefox-configmap
+          key: tz
+    volumeMounts:
+    - mountPath: /config
+      name: firefox-config
+  volumes:
+  - name: firefox-config
+    persistentVolumeClaim:
+      claimName: firefox-01-config
